@@ -33,9 +33,15 @@ public class DetailActivity extends AppCompatActivity {
         alsoKnownTv = findViewById(R.id.also_known_tv);
         ingredientsTv = findViewById(R.id.ingredients_label);
         descriptionTv = findViewById(R.id.description_label);
-        getSandwichDetails();
-        populateUI(sandwich);
 
+        if(savedInstanceState != null){
+            sandwich = savedInstanceState.getParcelable("sandwich");
+        }else{
+            getSandwichDetails();
+        }
+        if(sandwich != null) {
+            populateUI(sandwich);
+        }
     }
 
     private void closeOnError() {
@@ -50,7 +56,6 @@ public class DetailActivity extends AppCompatActivity {
         if (sandwich == null) {
             // Sandwich data unavailable
             closeOnError();
-            return;
         }
     }
 
@@ -61,11 +66,23 @@ public class DetailActivity extends AppCompatActivity {
         setTitle(sandwich.getMainName());
         //sandwich details
         originTv.setText(sandwich.getPlaceOfOrigin());
-        for(String name : sandwich.getAlsoKnownAs()){
-            alsoKnownTv.append(name + ",");
+        for(int i = 0; i< sandwich.getAlsoKnownAs().size(); i ++){
+            String name = sandwich.getAlsoKnownAs().get(i);
+            if(sandwich.getAlsoKnownAs().size()-1 == i ){
+                alsoKnownTv.append(name + ".");
+            }else{
+                alsoKnownTv.append(name + ",");
+            }
         }
 
-        ingredientsTv.setText(sandwich.getIngredients().toString());
+        for (int z=0 ; z<sandwich.getIngredients().size() ; z++){
+            String ingredient = sandwich.getIngredients().get(z);
+            if (sandwich.getIngredients().size() -1 == z){
+                ingredientsTv.append(ingredient + ".");
+            }else{
+                ingredientsTv.append(ingredient + ",");
+            }
+        }
         descriptionTv.setText(sandwich.getDescription());
     }
 
@@ -76,11 +93,30 @@ public class DetailActivity extends AppCompatActivity {
             closeOnError();
         }
 
-        position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION);
+        if (intent != null) {
+            position = intent.getIntExtra(EXTRA_POSITION, DEFAULT_POSITION);
+        }
         if (position == DEFAULT_POSITION) {
             // EXTRA_POSITION not found in intent
             closeOnError();
-            return;
         }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if(savedInstanceState!= null)
+        {
+            sandwich = savedInstanceState.getParcelable("sandwich");
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (sandwich != null) {
+            outState.putParcelable("sandwich", sandwich);
+        }
+        super.onSaveInstanceState(outState);
+
     }
 }

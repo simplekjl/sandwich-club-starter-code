@@ -27,7 +27,7 @@ public class JsonUtils {
             List<String> ingredientsList = new ArrayList<>();
             JSONArray ingredients = sandwichJson.getJSONArray("ingredients");
             for(int i=0 ; i<ingredients.length(); i++){
-                namesList.add(ingredients.getString(i));
+                ingredientsList.add(ingredients.getString(i));
             }
             sandwich.setIngredients(ingredientsList);
             sandwich.setPlaceOfOrigin(sandwichJson.getString("placeOfOrigin"));
